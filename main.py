@@ -3,6 +3,12 @@ from database import conn, cur
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
+cur.execute("CREATE TABLE IF NOT EXISTS products(id SERIAL PRIMARY KEY, name VARCHAR(100), buying_price NUMERIC(14,2),selling_price NUMERIC(14,2), stock_quantity INTEGER)")
+
+cur.execute("CREATE TABLE IF NOT EXISTS sales(id SERIAL PRIMARY KEY, pid NUMERIC, quantity NUMERIC(5,2), created_at DATETIME )")
+
+conn.commit()
+
 
 @app.route('/')
 def index():
