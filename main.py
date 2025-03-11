@@ -8,6 +8,10 @@ bcrypt = Bcrypt(app)
 
 app.secret_key = '_5#y2L"F4Q8z\n\xebuhbivyc]/'
 
+cur.execute("CREATE TABLE IF NOT EXISTS products(id serial PRIMARY KEY, name VARCHAR(100), buying_price FLOAT, selling_price FLOAT, stock_quantity INT)");
+cur.execute("CREATE TABLE IF NOT EXISTS sales(id serial PRIMARY KEY, pid INT, quantity INT, created_at TIMESTAMP,CONSTRAINT myproduct FOREIGN KEY(pid) references products(id) on UPDATE cascade on DELETE restrict)");
+conn.commit()
+
 def login_required(f):
     @wraps(f)
     def protected():
@@ -93,19 +97,19 @@ def sales():
 
 @app.route("/dashboard", methods=["GET", "POST"])
 def dashboard():
-    # cur.execute("SELECT prodcuts.name AS product_name, SUM(sales.quantity * (products.selling_price - products.buying_price)) AS total_profit FROM sales JOIN products ON")
-    # sales_result = cur.fetchall()
-    # x = []
-    # y = []
-    # for i in sales_result:
-    #     x.append(i[0])
-    #     y.append(float(i[1]))
+    cur.execute("SELECT prodcuts.name AS product_name, SUM(sales.quantity * (products.selling_price - products.buying_price)) AS total_profit FROM sales JOIN products ON")
+    sales_result = cur.fetchall()
+    x = []
+    y = []
+    for i in sales_result:
+        x.append(i[0])
+        y.append(float(i[1]))
 
-    # cur.execute(
-    #     "select products.name as product_name, sum(sales.quantity * (products.selling.price - products.buying_price) as total_profit from sales")
-    # profit_results = cur.fetchall()
+    cur.execute(
+        "select products.name as product_name, sum(sales.quantity * (products.selling.price - products.buying_price) as total_profit from sales")
+    profit_results = cur.fetchall()
 
-    # return render_template("dasboard.html", x-x, y-y, profit_results-profit_results)
+    return render_template("dasboard.html", x-x, y-y, profit_results-profit_results)
     return render_template("dashboard.html")
 
 
