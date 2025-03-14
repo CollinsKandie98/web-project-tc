@@ -55,6 +55,28 @@ def register():
     else:
         return render_template("register.html")
 
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        email_address = request.form["emailaddress"]
+        password = request.form["password"]
+        querylogin = "select id from users where email_address = '{}' and password = '{}'".format(email_address, password)
+        cur.execute(querylogin)
+        row = cur.fetchone()
+
+        if row is None:
+            flash("Invalid credentials")
+            return render_template("login.html")
+        else:
+            session['email'] = email_address
+            return redirect(url_for('dashboard'))
+    else:
+        return render_template("login.html")
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
 
 @app.route('/products', methods=["GET", "POST"])
 def products():
@@ -93,6 +115,27 @@ def sales():
         cur.execute(query_make_sales)
         conn.commit()
         return redirect('/sales')
+
+@app.route("/expenses", methods=["GET", "POST"])
+@login_required
+def expenses():
+    if request.method == "GET":
+        cur.execute("select * from expenses")
+        expenses = cur.fetchall()
+        return render_template("expenses.html", expenses=expenses)
+    else:
+        expense_category = request.form["expense_category"]
+        description = request.form["description"]
+        amount = float(request.form["amount"])
+
+        query_create_expense = """
+            INSERT INTO expenses (expense_category, description, amount, purchase_date) 
+            "VALUES ('{}', '{}', '{}', NOW())"
+        """
+        cur.execute(query_create_expense, (expense_category, description, amount))
+        conn.commit()
+
+        return redirect("/expenses")
 
 
 @app.route("/dashboard", methods=["GET", "POST"])
@@ -142,23 +185,3 @@ def dashboard():
 #         return redirect("/register")
 
 
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        email_address = request.form["emailaddress"]
-        password = request.form["password"]
-        querylogin = "select id from users where email_address = '{}' and password = '{}'".format(email_address, password)
-        cur.execute(querylogin)
-        row = cur.fetchone()
-
-        if row is None:
-            flash("Invalid credentials")
-            return render_template("login.html")
-        else:
-            session['email'] = email_address
-            return redirect(url_for('dashboard'))
-    else:
-        return render_template("login.html")
-
-if __name__ == '__main__':
-    app.run(debug=True)
