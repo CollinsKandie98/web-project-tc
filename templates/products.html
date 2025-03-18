@@ -1,14 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css" />
-    <title>Products</title>
-</head>
-
-<body>
+{% extends "layout.html" %}
+{% block title %} Products Page {% endblock %}
+{% block content %}
 <form action="/products" method="post">
     <label for="">Product name</label>
     <input type="text" name="name">
@@ -23,33 +15,26 @@
 
 
 
-    <table id="myTable" border="3">
-        <thead>
-            <tr>
-                <th>id</th>
-                <th>name</th>
-                <th>buying price</th>
-                <th>selling price</th>
-                <th>stock quantity</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for p in products %}
-            <tr>
-                <td>{{p[0]}}</td>
-                <td>{{p[1]}}</td>
-                <td>{{p[2]}}</td>
-                <td>{{p[3]}}</td>
-                <td>{{p[4]}}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
-        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
-    <script>let table = new DataTable('#myTable');</script>
-</body>
-
-</html>
+<table id="myTable" border="3">
+    <thead>
+        <tr>
+            <th>id</th>
+            <th>name</th>
+            <th>buying price</th>
+            <th>selling price</th>
+            <th>stock quantity</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in products %}
+        <tr>
+            <td>{{p[0]}}</td>
+            <td>{{p[1]}}</td>
+            <td>{{p[2]}}</td>
+            <td>{{p[3]}}</td>
+            <td>{{p[4]}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

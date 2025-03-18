@@ -14,10 +14,12 @@ conn.commit()
 
 def login_required(f):
     @wraps(f)
-    def protected():
+    def protected(*args, **kwargs):
         if 'email' not in session:
-            return redirect(url_for('login'))
-        return f()
+            flash('You must first log in')
+            next_url = request.url #Store the requested URL
+            return redirect(url_for('login', next=next_url)) #Pass the next URL
+        return f(*args, **kwargs)
     return protected
 
 
@@ -57,6 +59,7 @@ def register():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    next_url = request.args.get('next') #Get the next URL if provided
     if request.method == "POST":
         email_address = request.form["emailaddress"]
         password = request.form["password"]
@@ -68,10 +71,15 @@ def login():
             flash("Invalid credentials")
             return render_template("login.html")
         else:
+            next_url =request.form['next_url']
             session['email'] = email_address
-            return redirect(url_for('dashboard'))
+            if next_url == "None":
+                return redirect(url_for('dashboard'))
+            else:
+                url = "/"+next_url.split('/')[-1]
+                return redirect(url)
     else:
-        return render_template("login.html")
+        return render_template("login.html", next_url=next_url)
 
 if __name__ == '__main__':
     app.run(debug=True)
