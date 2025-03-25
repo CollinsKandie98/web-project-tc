@@ -8,8 +8,11 @@ bcrypt = Bcrypt(app)
 
 app.secret_key = '_5#y2L"F4Q8z\n\xebuhbivyc]/'
 
-cur.execute("CREATE TABLE IF NOT EXISTS products(id serial PRIMARY KEY, name VARCHAR(100), buying_price FLOAT, selling_price FLOAT, stock_quantity INT)");
-cur.execute("CREATE TABLE IF NOT EXISTS sales(id serial PRIMARY KEY, pid INT, quantity INT, created_at TIMESTAMP,CONSTRAINT myproduct FOREIGN KEY(pid) references products(id) on UPDATE cascade on DELETE restrict)");
+cur.execute("CREATE TABLE IF NOT EXISTS products(id serial PRIMARY KEY, name VARCHAR(100) NOT NULL, buying_price FLOAT, selling_price FLOAT, stock_quantity INT DEFAULT 0)")
+cur.execute("CREATE TABLE IF NOT EXISTS sales(id serial PRIMARY KEY, pid INT, quantity INT, created_at TIMESTAMP,CONSTRAINT myproduct FOREIGN KEY(pid) references products(id) on UPDATE cascade on DELETE restrict)")
+cur.execute("CREATE TABLE IF NOT EXISTS purchases(id SERIAL PRIMARY KEY, expense_category VARCHAR(100) NOT NULL, description TEXT, amount DECIMAL(10,2) NOT NULL, purchase_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
+cur.execute("CREATE TABLE IF NOT EXISTS stock (id serial PRIMARY KEY, pid int, quantity numeric(5,2), created_at TIMESTAMP, CONSTRAINT myproduct FOREIGN KEY(pid) references products(id) on UPDATE cascade on DELETE restrict);")
+cur.execute("CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, email VARCHAR,password VARCHAR);")
 conn.commit()
 
 def login_required(f):
